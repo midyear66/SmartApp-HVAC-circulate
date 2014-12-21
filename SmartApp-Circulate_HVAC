@@ -53,13 +53,6 @@ def updated() {
 }
 
 def start_circulate() {
-	def heatingSetpoint = settings.device.latestValue("heatingSetpoint")
-    def coolingSetpoint = settings.device.latestValue("coolingSetpoint")
-    DEBUG("Heating Set Point: ${heatingSetpoint}")
-    DEBUG("Cooling Set Point: ${coolingSetpoint}")
-    DEBUG("Heating Max Point: ${max_heat}")
-    DEBUG("Cooling Min Point: ${min_cool}")
-    
     settings.device.fanCirculate()
     settings.device.fanAuto()
 }

@@ -57,6 +57,10 @@ def start_circulate() {
     settings.device.fanAuto()
 }
 
+def stop_circulate() {
+    settings.device.fanAuto()
+}
+
 def initialize() {
     def minutes = settings."interval".toInteger()
     if (minutes > 0) {

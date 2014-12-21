@@ -54,7 +54,6 @@ def updated() {
 
 def start_circulate() {
     settings.device.fanCirculate()
-    settings.device.fanAuto()
 }
 
 def stop_circulate() {

@@ -1,0 +1,81 @@
+/**
+ *  Run circulate in HVAC
+ *
+ *  Copyright 2014 Bob Sanford
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License. You may obtain a copy of the License at:
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+ *  for the specific language governing permissions and limitations under the License.
+ *
+ */
+definition(
+    name: "Run circulate in HVAC",
+    namespace: "midyear66",
+    author: "Bob Sanford",
+    description: "Run circulate every X minutes if AC or heat has not been on",
+    category: "Green Living",
+    iconUrl: "https://s3.amazonaws.com/smartthings-device-icons/thermostat/fan-circulate.png",
+    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/thermostat/st.thermostat.fan-circulate@2x.png",
+    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/thermostat/st.thermostat.fan-circulate@2x.png")
+
+
+preferences {
+	section("Title") {
+		paragraph "Run circulate in HVAC"
+	}
+	section("About") {
+        paragraph "Run circulate every X minutes if AC or heat has not been on"
+        paragraph "Version 1.0\nCopyright (c) 2014 ssetco.com"
+    }
+    section("Thermostat") {
+		// TODO: put inputs here
+        input "device", "capability.thermostat", title:"Select thermostat to be controlled", multiple:false, required:false
+        input "interval", "number", title:"Set interval for circulation (in minutes)", defaultValue:30
+	}
+}
+
+def installed() {
+	log.debug "Installed with settings: ${settings}"
+
+	initialize()
+}
+
+def updated() {
+	log.debug "Updated with settings: ${settings}"
+
+	unsubscribe()
+	initialize()
+}
+
+def start_circulate() {
+	def heatingSetpoint = settings.device.latestValue("heatingSetpoint")
+    def coolingSetpoint = settings.device.latestValue("coolingSetpoint")
+    DEBUG("Heating Set Point: ${heatingSetpoint}")
+    DEBUG("Cooling Set Point: ${coolingSetpoint}")
+    DEBUG("Heating Max Point: ${max_heat}")
+    DEBUG("Cooling Min Point: ${min_cool}")
+    
+    settings.device.fanCirculate()
+    settings.device.fanAuto()
+}
+
+def initialize() {
+    def minutes = settings."interval".toInteger()
+    if (minutes > 0) {
+    	DEBUG("Scheduling circulate on HVAC to run every ${minutes} minutes.")
+        def sched = "0 0/${minutes} * * * ?"
+        schedule(sched, start_circulate)
+    }
+}
+
+
+// TODO: implement event handlers
+
+private def DEBUG(message){
+	log.debug message
+}

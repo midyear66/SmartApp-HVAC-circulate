@@ -47,6 +47,7 @@ def installed() {
 def updated() {
 	DEBUG("Updated with settings: ${settings}")
 	unsubscribe()
+	unschedule()
 	initialize()
 }
 

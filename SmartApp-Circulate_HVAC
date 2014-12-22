@@ -76,15 +76,16 @@ def schedule_stop_circulate(){
 
 def initialize() {
 	DEBUG("initialize")
+    DEBUG("Current HVAC State: ${settings.device.latestValue("thermostatOperatingState")}")
 	subscribe(settings.device, "thermostatOperatingState", eventHandler)
-	if(settings.device.thermostatOperatingState == "idle")
+	if(settings.device.latestValue("thermostatOperatingState") == "idle")
 		schedule_start_circulate()
 }
     
 // TODO: implement event handlers
 
 def eventHandler(evt){
-	DEBUG("$evt.value: $evt, $settings")
+	DEBUG("eventHandler: ${evt.value}: ${evt}, ${settings}")
 	if($evt.value == "idle")
 		subscribe(settings.device, "thermostatOperatingState", eventHandler)
 	if($evt.value == "heating"|| $evt.value == "cooling")

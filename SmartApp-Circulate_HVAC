@@ -20,8 +20,8 @@ definition(
     description: "Run circulate every X minutes if AC or heat has not been on",
     category: "Green Living",
     iconUrl: "https://s3.amazonaws.com/smartthings-device-icons/thermostat/fan-circulate.png",
-    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/thermostat/st.thermostat.fan-circulate@2x.png",
-    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/thermostat/st.thermostat.fan-circulate@2x.png")
+    iconX2Url: "https://s3.amazonaws.com/smartthings-device-icons/thermostat/fan-circulate@2x.png",
+    iconX3Url: "https://s3.amazonaws.com/smartthings-device-icons/thermostat/fan-circulate@2x.png")
 
 
 preferences {

@@ -91,7 +91,7 @@ def initialize() {
 def eventHandler(evt){
 	DEBUG("eventHandler: ${evt.value}: ${evt}, ${settings}")
 	if(evt.value == "idle")
-		subscribe(settings.device, "thermostatOperatingState", eventHandler)
+		schedule_start_circulate()
 	if(evt.value == "heating"|| evt.value == "cooling")
 		unschedule()
 }

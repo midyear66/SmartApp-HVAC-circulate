@@ -52,7 +52,7 @@ def updated() {
 
 def start_circulate() {
 	DEBUG("fanCirculate")
-    settings.device.fanCirculate()
+    settings.device.fanOn()
     unschedule()
     schedule_stop_circulate()
 }

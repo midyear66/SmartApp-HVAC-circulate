@@ -77,7 +77,7 @@ def schedule_stop_circulate(){
 def initialize() {
 	DEBUG("initialize")
 	subscribe(settings.device, "thermostatOperatingState", eventHandler)
-	if(settings.device.thermostatOperatingState == "idle"){
+	if(settings.device.thermostatOperatingState == "idle")
 		schedule_start_circulate()
 }
     

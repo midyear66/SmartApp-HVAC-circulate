@@ -64,7 +64,8 @@ def stop_circulate() {
 
 def initialize() {
 	DEBUG("initialize")
-	subscribe(settings.device, "thermostatOperatingState", eventHandler)
+	if(settings.device.thermostatOperatingState == "idle")
+		subscribe(settings.device, "thermostatOperatingState", eventHandler)
 }
     
 def schedCirculate() {
@@ -73,8 +74,13 @@ def schedCirculate() {
     	def len_minutes = settings.length.toInteger()
     	if (minutes > 0) {
     		DEBUG("Scheduling circulate on HVAC to run every ${int_minutes} minutes.")
-        	def sched = "0 0/${int_minutes} * * * ?"
-        	schedule(sched, start_circulate)
+        	def sched_start = "0 0/${int_minutes} * * * ?"
+        	schedule(sched_start, start_circulate)
+        	DEBUG("Scheduling circulate on HVAC to stop after ${total_minutes} minutes.")
+        	total_minutes = int_minutes + len_minutes
+    	        def sched_stop = "0 0/${total_minutes} * * * ?"
+        	schedule(sched_stop, stop_circulate)
+
   	}
 
 }
@@ -83,6 +89,8 @@ def schedCirculate() {
 
 def eventHandler(evt){
 	DEBUG("$evt.value: $evt, $settings")
+	if($evt == "idle")
+		subscribe(settings.device, "thermostatOperatingState", eventHandler)
 }
 
 private def DEBUG(message){

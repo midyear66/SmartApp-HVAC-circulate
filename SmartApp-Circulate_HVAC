@@ -41,20 +41,18 @@ preferences {
 
 def installed() {
 	DEBUG("Installed with settings: ${settings}")
-
 	initialize()
 }
 
 def updated() {
 	DEBUG("Updated with settings: ${settings}")
-
 	unsubscribe()
 	initialize()
 }
 
 def start_circulate() {
 	DEBUG("fanCirculate")
-    	settings.device.fanCirculate()
+    	settings.device.fanOn()
 }
 
 def stop_circulate() {
@@ -62,36 +60,34 @@ def stop_circulate() {
     	settings.device.fanAuto()
 }
 
+def schedule_start_circulate(){
+	def minutes = settings.interval.toInteger()
+  	DEBUG("Scheduling circulate on HVAC to run every ${int_minutes} minutes.")
+        def sched_start = "0 0/${minutes} * * * ?"
+        schedule(sched_start, start_circulate)
+}
+
+def schedule_stop_circulate(){
+	def minutes = settings.length.toInteger()
+        DEBUG("Scheduling circulate on HVAC to stop after ${minutes} minutes.")
+    	def sched_stop = "0 0/${minutes} * * * ?"
+        schedule(sched_stop, stop_circulate)
+}
+
 def initialize() {
 	DEBUG("initialize")
-	if(settings.device.thermostatOperatingState == "idle")
-		subscribe(settings.device, "thermostatOperatingState", eventHandler)
+	subscribe(settings.device, "thermostatOperatingState", eventHandler)
+	if(settings.device.thermostatOperatingState == "idle"){
+		schedule_start_circulate()
 }
     
-def schedCirculate() {
-	DEBUG("schedCirculate")
-    	def int_minutes = settings.interval.toInteger()
-    	def len_minutes = settings.length.toInteger()
-    	if (minutes > 0) {
-    		DEBUG("Scheduling circulate on HVAC to run every ${int_minutes} minutes.")
-        	def sched_start = "0 0/${int_minutes} * * * ?"
-        	schedule(sched_start, start_circulate)
-        	DEBUG("Scheduling circulate on HVAC to stop after ${total_minutes} minutes.")
-        	total_minutes = int_minutes + len_minutes
-    	        def sched_stop = "0 0/${total_minutes} * * * ?"
-        	schedule(sched_stop, stop_circulate)
-
-  	}
-
-}
-
 // TODO: implement event handlers
 
 def eventHandler(evt){
 	DEBUG("$evt.value: $evt, $settings")
-	if($evt == "idle")
+	if($evt.value == "idle")
 		subscribe(settings.device, "thermostatOperatingState", eventHandler)
-	if($evt == "heating"|| $evt == "cooling")
+	if($evt.value == "heating"|| $evt.value == "cooling")
 		unsubscribe()
 }
 

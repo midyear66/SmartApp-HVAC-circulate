@@ -34,8 +34,9 @@ preferences {
     }
     section("Thermostat") {
 		// TODO: put inputs here
-        input "device", "capability.thermostat", title:"Select thermostat to be controlled", multiple:false, required:false
+        input "device", "capability.thermostat", title:"Select thermostat to be controlled"
         input "interval", "number", title:"Set interval for circulation (in minutes)", defaultValue:30
+        input "length", "number", title:"Set of time for circulation (in minutes)", defaultValue:5
 	}
 }
 
@@ -53,24 +54,37 @@ def updated() {
 }
 
 def start_circulate() {
+	DEBUG("fanCirculate")
     settings.device.fanCirculate()
 }
 
 def stop_circulate() {
+	DEBUG("fanAuto")
     settings.device.fanAuto()
 }
 
 def initialize() {
-    def minutes = settings."interval".toInteger()
+	DEBUG("initialize")
+	subscribe(settings.device, "thermostatOperatingState", eventHandler)
+}
+    
+def schedCirculate() {
+	DEBUG("schedCirculate")
+    def int_minutes = settings.interval.toInteger()
+    def len_minutes = settings.length.toInteger()
     if (minutes > 0) {
-    	DEBUG("Scheduling circulate on HVAC to run every ${minutes} minutes.")
-        def sched = "0 0/${minutes} * * * ?"
+    	DEBUG("Scheduling circulate on HVAC to run every ${int_minutes} minutes.")
+        def sched = "0 0/${int_minutes} * * * ?"
         schedule(sched, start_circulate)
-    }
+  	}
+
 }
 
-
 // TODO: implement event handlers
+
+def eventHandler(evt){
+	DEBUG("$evt.value: $evt, $settings")
+}
 
 private def DEBUG(message){
 	log.debug message

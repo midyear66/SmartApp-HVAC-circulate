@@ -29,25 +29,24 @@ preferences {
 		paragraph "Run circulate in HVAC"
 	}
 	section("About") {
-        paragraph "Run circulate every X minutes if AC or heat has not been on"
-        paragraph "Version 1.0\nCopyright (c) 2014 ssetco.com"
-    }
-    section("Thermostat") {
-		// TODO: put inputs here
-        input "device", "capability.thermostat", title:"Select thermostat to be controlled"
-        input "interval", "number", title:"Set interval for circulation (in minutes)", defaultValue:30
-        input "length", "number", title:"Set of time for circulation (in minutes)", defaultValue:5
+        	paragraph "Run circulate every X minutes if AC or heat has not been on"
+        	paragraph "Version 1.0\nCopyright (c) 2014 ssetco.com"
+    	}
+    	section("Thermostat") {
+        	input "device", "capability.thermostat", title:"Select thermostat to be controlled"
+        	input "interval", "number", title:"Set interval for circulation (in minutes)", defaultValue:30
+        	input "length", "number", title:"Set of time for circulation (in minutes)", defaultValue:5
 	}
 }
 
 def installed() {
-	log.debug "Installed with settings: ${settings}"
+	DEBUG("Installed with settings: ${settings}")
 
 	initialize()
 }
 
 def updated() {
-	log.debug "Updated with settings: ${settings}"
+	DEBUG("Updated with settings: ${settings}")
 
 	unsubscribe()
 	initialize()
@@ -70,12 +69,12 @@ def initialize() {
     
 def schedCirculate() {
 	DEBUG("schedCirculate")
-    def int_minutes = settings.interval.toInteger()
-    def len_minutes = settings.length.toInteger()
-    if (minutes > 0) {
-    	DEBUG("Scheduling circulate on HVAC to run every ${int_minutes} minutes.")
-        def sched = "0 0/${int_minutes} * * * ?"
-        schedule(sched, start_circulate)
+    	def int_minutes = settings.interval.toInteger()
+    	def len_minutes = settings.length.toInteger()
+    	if (minutes > 0) {
+    		DEBUG("Scheduling circulate on HVAC to run every ${int_minutes} minutes.")
+        	def sched = "0 0/${int_minutes} * * * ?"
+        	schedule(sched, start_circulate)
   	}
 
 }

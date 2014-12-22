@@ -54,12 +54,12 @@ def updated() {
 
 def start_circulate() {
 	DEBUG("fanCirculate")
-    settings.device.fanCirculate()
+    	settings.device.fanCirculate()
 }
 
 def stop_circulate() {
 	DEBUG("fanAuto")
-    settings.device.fanAuto()
+    	settings.device.fanAuto()
 }
 
 def initialize() {

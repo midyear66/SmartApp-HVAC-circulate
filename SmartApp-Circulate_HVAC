@@ -91,7 +91,7 @@ def eventHandler(evt){
 	DEBUG("$evt.value: $evt, $settings")
 	if($evt == "idle")
 		subscribe(settings.device, "thermostatOperatingState", eventHandler)
-	if($evt == "active")
+	if($evt == "heating"|| $evt == "cooling")
 		unsubscribe()
 }
 

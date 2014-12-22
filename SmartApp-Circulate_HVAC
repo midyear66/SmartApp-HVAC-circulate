@@ -62,7 +62,7 @@ def stop_circulate() {
 
 def schedule_start_circulate(){
 	def minutes = settings.interval.toInteger()
-  	DEBUG("Scheduling circulate on HVAC to run every ${int_minutes} minutes.")
+  	DEBUG("Scheduling circulate on HVAC to run every ${minutes} minutes.")
         def sched_start = "0 0/${minutes} * * * ?"
         schedule(sched_start, start_circulate)
 }

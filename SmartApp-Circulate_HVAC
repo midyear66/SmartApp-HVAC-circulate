@@ -93,7 +93,7 @@ def eventHandler(evt){
 	if(evt.value == "idle")
 		subscribe(settings.device, "thermostatOperatingState", eventHandler)
 	if(evt.value == "heating"|| evt.value == "cooling")
-		unsubscribe()
+		unschedule()
 }
 
 private def DEBUG(message){

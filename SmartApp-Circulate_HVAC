@@ -34,8 +34,8 @@ preferences {
     	}
     	section("Thermostat") {
         	input "device", "capability.thermostat", title:"Select thermostat to be controlled"
-        	input "interval", "number", title:"Set interval for circulation (in minutes)", defaultValue:30
-        	input "length", "number", title:"Set of time for circulation (in minutes)", defaultValue:5
+        	input "interval", "number", title:"Set time between circulation cycles (in minutes)", defaultValue:30
+        	input "length", "number", title:"Set of length of circulation cycle (in minutes)", defaultValue:5
 	}
 }
 

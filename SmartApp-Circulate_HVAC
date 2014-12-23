@@ -97,6 +97,7 @@ def eventHandler(evt){
 	}
 	if(evt.value == "heating"|| evt.value == "cooling"){
 		unschedule()
+		settings.device.fanAuto()
 	}
 }
 

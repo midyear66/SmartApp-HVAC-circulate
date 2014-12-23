@@ -53,48 +53,51 @@ def updated() {
 
 def start_circulate() {
 	DEBUG("fanCirculate")
-    settings.device.fanOn()
-    unschedule()
-    schedule_stop_circulate()
+    	settings.device.fanOn()
+    	unschedule()
+    	schedule_stop_circulate()
 }
 
 def stop_circulate() {
 	DEBUG("fanAuto")
-    settings.device.fanAuto()
-    unschedule()
-    schedule_start_circulate()
+    	settings.device.fanAuto()
+    	unschedule()
+    	schedule_start_circulate()
 }
 
 def schedule_start_circulate(){
 	def minutes = settings.interval.toInteger()
   	DEBUG("Scheduling circulate on HVAC to run every ${minutes} minutes.")
-    def sched_start = "0 0/${minutes} * * * ?"
-    schedule(sched_start, start_circulate)
+    	def sched_start = "0 0/${minutes} * * * ?"
+    	schedule(sched_start, start_circulate)
 }
 
 def schedule_stop_circulate(){
 	def minutes = settings.length.toInteger()
-    DEBUG("Scheduling circulate on HVAC to stop after ${minutes} minutes.")
-    def sched_stop = "0 0/${minutes} * * * ?"
-    schedule(sched_stop, stop_circulate)
+    	DEBUG("Scheduling circulate on HVAC to stop after ${minutes} minutes.")
+    	def sched_stop = "0 0/${minutes} * * * ?"
+    	schedule(sched_stop, stop_circulate)
 }
 
 def initialize() {
 	DEBUG("initialize")
-    def running_state = settings.device.currentValue("thermostatOperatingState")
+    	def running_state = settings.device.currentValue("thermostatOperatingState")
 	subscribe(settings.device, "thermostatOperatingState", eventHandler)
-	if(settings.device.currentValue("thermostatOperatingState") == "idle")
+	if(settings.device.currentValue("thermostatOperatingState") == "idle"){
 		schedule_start_circulate()
+	}
 }
     
 // TODO: implement event handlers
 
 def eventHandler(evt){
 	DEBUG("eventHandler: ${evt.value}: ${evt}, ${settings}")
-	if(evt.value == "idle")
+	if(evt.value == "idle"){
 		schedule_start_circulate()
-	if(evt.value == "heating"|| evt.value == "cooling")
+	}
+	if(evt.value == "heating"|| evt.value == "cooling"){
 		unschedule()
+	}
 }
 
 private def DEBUG(message){

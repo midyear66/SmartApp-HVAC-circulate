@@ -111,5 +111,5 @@ private def calculate_cron(){
 }
 
 private def DEBUG(message){
-	log.debug message
+//	log.debug message
 }

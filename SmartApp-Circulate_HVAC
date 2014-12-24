@@ -47,46 +47,32 @@ def installed() {
 def updated() {
 	DEBUG("Updated with settings: ${settings}")
 	unsubscribe()
-	unschedule()
 	initialize()
 }
 
-def start_circulate() {
-	DEBUG("fanCirculate")
-    settings.device.fanOn()
-    unschedule()
-    schedule_stop_circulate()
+def scheduler(){
+	DEBUG ("scheduler()")
+    	settings.device.fanAuto()
+	def interval = settings.interval.toInteger() * 60
+	def length = settings.length.toInteger() * 60
+	DEBUG("Interval in seconds: ${interval}, Length in seconds: ${length}")
+	runIn(interval, start_circulate)
+	runIn(interval+length, scheduler)
 }
-
-def stop_circulate() {
-	DEBUG("fanAuto")
-    settings.device.fanAuto()
-    unschedule()
-    schedule_start_circulate()
-}
-
-def schedule_start_circulate(){
-	settings.device.fanAuto()
-    def minutes = settings.interval.toInteger()
-	def cron_time = calculate_cron(minutes)
-	def sched_start = "0 ${cron_time} * * * ?"
-    schedule(sched_start, start_circulate)
-}
-
-def schedule_stop_circulate(){
-    def minutes = settings.length.toInteger()
-	def cron_time = calculate_cron(minutes)
-    def sched_stop = "0 ${cron_time} * * * ?"
-    schedule(sched_stop, stop_circulate)
+        
+def start_circulate(){
+	DEBUG ("start_circulate()")
+	settings.device.fanOn()
 }
 
 def initialize() {
-	DEBUG("initialize")
+	DEBUG("initialize()")
+    	subscribe(settings.device, "thermostatOperatingState", eventHandler)
 	def running_state = settings.device.currentValue("thermostatOperatingState")
-	subscribe(settings.device, "thermostatOperatingState", eventHandler)
+    	DEBUG ("running_state: ${running_state}")
 	if(settings.device.currentValue("thermostatOperatingState") == "idle"){
-		schedule_start_circulate()
-	}
+		scheduler()
+    }
 }
     
 // TODO: implement event handlers
@@ -94,21 +80,11 @@ def initialize() {
 def eventHandler(evt){
 	DEBUG("eventHandler: ${evt.value}: ${evt}, ${settings}")
 	if(evt.value == "idle"){
-		schedule_start_circulate()
+		initialize()
 	}
 	if(evt.value == "heating"|| evt.value == "cooling"){
-		unschedule()
-	}
-}
-
-private def calculate_cron(minutes){
-    def now = new Date().minutes
-    def starttime = now + minutes
-    if (starttime >= 60){
-    	starttime = starttime - 60
+		unsubscribe()
     }
-    DEBUG ("current minute: ${now} cron_time minute: ${starttime}")
-    return starttime
 }
 
 private def DEBUG(message){

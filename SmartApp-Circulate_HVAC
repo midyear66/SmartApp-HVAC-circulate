@@ -88,5 +88,5 @@ def eventHandler(evt){
 }
 
 private def DEBUG(message){
-	log.debug message
+//	log.debug message
 }

@@ -47,6 +47,7 @@ def installed() {
 def updated() {
 	DEBUG("Updated with settings: ${settings}")
 	unsubscribe()
+	unschedule()
 	initialize()
 }
 
@@ -84,7 +85,7 @@ def eventHandler(evt){
 	}
 	if(evt.value == "heating"|| evt.value == "cooling"){
 		unschedule()
--   }
+   }
 }
 
 private def DEBUG(message){

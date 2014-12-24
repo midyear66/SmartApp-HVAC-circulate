@@ -82,9 +82,6 @@ def eventHandler(evt){
 	if(evt.value == "idle"){
 		initialize()
 	}
-	if(evt.value == "heating"|| evt.value == "cooling"){
-		unsubscribe()
-    }
 }
 
 private def DEBUG(message){

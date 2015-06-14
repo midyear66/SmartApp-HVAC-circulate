@@ -29,30 +29,39 @@ preferences {
 	}
 	section("About") {
         	paragraph "Run circulate every X minutes if AC or heat has not been on"
-        	paragraph "Version 1.0\nCopyright (c) 2014 ssetco.com"
+            paragraph "Additional setpoint can be used to determine minimum run temperature."
+        	paragraph "Version 1.1\nCopyright (c) 2014 ssetco.com"
     	}
     	section("Thermostat") {
-        	input "device", "capability.thermostat", title:"Select thermostat to be controlled"
+        	input "thermostat", "capability.thermostat", title:"Select thermostat to be controlled"
         	input "interval", "number", title:"Set time between circulation cycles (in minutes)", defaultValue:30
         	input "length", "number", title:"Set of length of circulation cycle (in minutes)", defaultValue:5
-	}
+		}
+        section("Choose a temperature sensor... "){
+		input "sensor", "capability.temperatureMeasurement", title: "Temperature Sensor used to establish minimum run temperature"
+		}
+	section("Operation") {
+		input "runTemp", "number", title:"Choose a temperature to set the minimum run temperature.", defaultValue:70
+		
+        }
 }
 
 def installed() {
 	DEBUG("Installed with settings: ${settings}")
-	initialize()
+    	initialize()
 }
 
 def updated() {
 	DEBUG("Updated with settings: ${settings}")
 	unsubscribe()
 	unschedule()
-	initialize()
+   	initialize()
+
 }
 
 def scheduler(){
 	DEBUG ("scheduler()")
-    	settings.device.fanAuto()
+    	thermostat.fanAuto()
 	def interval = settings.interval.toInteger() * 60
 	def length = settings.length.toInteger() * 60
 	DEBUG("Interval in seconds: ${interval}, Length in seconds: ${length}")
@@ -61,16 +70,18 @@ def scheduler(){
 }
         
 def start_circulate(){
-	DEBUG ("start_circulate()")
-	settings.device.fanOn()
+	DEBUG("start_circulate()")
+	if (sensor.currentValue("temperature") >= runtemp)
+	{	DEBUG ("into start_circulate() if statement")
+		thermostat.fanOn()
+   	}
 }
 
 def initialize() {
 	DEBUG("initialize()")
-    	subscribe(settings.device, "thermostatOperatingState", eventHandler)
-	def running_state = settings.device.currentValue("thermostatOperatingState")
-    	DEBUG ("running_state: ${running_state}")
-	if(settings.device.currentValue("thermostatOperatingState") == "idle"){
+	subscribe(device, "thermostatOperatingState", eventHandler)
+    	DEBUG ("running_state: ${thermostat.currentValue("thermostatOperatingState")}")
+	if(thermostat.currentValue("thermostatOperatingState") == "idle"){
 		scheduler()
     }
 }
@@ -80,13 +91,20 @@ def initialize() {
 def eventHandler(evt){
 	DEBUG("eventHandler: ${evt.value}: ${evt}, ${settings}")
 	if(evt.value == "idle"){
+    	LOG("idle - running scheduler()")
 		scheduler()
 	}
 	if(evt.value == "heating"|| evt.value == "cooling"){
-		unschedule()
+		LOG("not idle - running unschedule()")
+    		unschedule()
+    		thermostat.fanAuto()
    }
 }
 
+private def LOG(message){
+	log.info message
+}
+
 private def DEBUG(message){
-//	log.debug message
+	//log.debug message
 }

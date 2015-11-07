@@ -71,7 +71,7 @@ def scheduler(){
         
 def start_circulate(){
 	DEBUG("start_circulate()")
-	if (sensor.currentValue("temperature") >= runtemp)
+	if (sensor.currentValue("temperature") >= runTemp)
 	{	DEBUG ("into start_circulate() if statement")
 		thermostat.fanOn()
    	}

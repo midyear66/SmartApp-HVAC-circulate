@@ -1,4 +1,4 @@
-SmartApp-HVAC-circulate
+SmartApp-HVAC-circulate (ARCHIVED)
 =======================
 
 Activate the HVAC fan every X minutes if HVAC has not run for Y minutes and current temp is above specifed temp.
